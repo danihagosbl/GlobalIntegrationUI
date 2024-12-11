@@ -1,8 +1,19 @@
+using Microsoft.Extensions.Logging.ApplicationInsights;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient(); // Register HttpClient
+
+// Configure application insight logging
+builder.Logging.AddApplicationInsights(
+        configureTelemetryConfiguration: (config) =>
+        config.ConnectionString = builder.Configuration.GetConnectionString("ApplicationInsightConnectionString"),
+        configureApplicationInsightsLoggerOptions: (options) => { }
+    );
+
+builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>("globalIntegrationUI", LogLevel.Trace);
 
 var app = builder.Build();
 
